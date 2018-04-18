@@ -5,7 +5,7 @@ from nltk.corpus import wordnet as wn
 #tree = ET.parse('exempleTuto.xml')
 
 
-tree = ET.parse('Corpus_partie1_corrige.txt.xml')
+tree = ET.parse('Corpus_partie2_corrige.txt.xml')
 root = tree.getroot()
 
 
