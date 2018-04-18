@@ -40,17 +40,9 @@ def test():
                 for words in sentence:
                     pprint(words.text)
 
-def testLea():
-    print("lancement du test!");
-    root = tree.getroot()
-
-    for child in root:
-        pprint(child.tag)
-    print("sortie de boucle");
 
 
-
-def getNamesByC():
+def getNamesAndDates():
     names = []
     sentences = root.findall('document/sentences/sentence') #Peut etre besoin de remplacer par 'document/sentence/sentence'
     print("boucle sentence")
@@ -58,14 +50,54 @@ def getNamesByC():
         tokens=sentence.findall('tokens/token')
         for token in tokens :
             person = token.find('NER')
-            if person.text == 'PERSON' :
+            if person.text == 'PERSON':
                 name = token.find('word').text
                 if name[0] == 'C' :
                     names.append(name)
+                    tokens = sentence.findall('tokens/token')
+                    for token in tokens:
+                        aDate = token.find('NER')
+                        if aDate.text == 'DATE':
+                            date = token.find('word').text
+                            print("it's a date")
+                            names.append(date)
+
     print('Liste de personnes commençant par C')
     for name in names :
         print(name)
     return names
+
+def getSentencesWithKillAndName():
+
+    ourSentences = []
+    sentences = root.findall('document/sentences/sentence') #Peut etre besoin de remplacer par 'document/sentence/sentence'
+    print("boucle sentence")
+    for sentence in sentences :
+        hasName = False
+        hasKill = False
+        tokens=sentence.findall('tokens/token')
+#################################################
+        for token in tokens :
+            person = token.find('NER')
+            if person.text == 'PERSON':
+                name = token.find('word').text
+                if name[0] == 'C' :
+                    hasName = True
+
+###########################################################
+            kill = token.find('word').text
+            if kill == 'kill':
+                hasKill = True
+        if(hasName and hasKill):
+            ourSentences.append(sentence)
+
+    print('Liste des phrases avec des personnes commançant par C et des dates')
+    for s in ourSentences :
+        tokens = s.findall('tokens/token')
+        for token in tokens:
+            print(token.find('word').text)
+
+    return ourSentences
 
 def getNames():
     names = []
@@ -82,4 +114,4 @@ def getNames():
         print(name)
     return names
 
-getNamesByC()
+getSentencesWithKillAndName()
