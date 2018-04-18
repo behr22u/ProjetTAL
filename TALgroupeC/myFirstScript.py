@@ -1,9 +1,10 @@
+import nltk
 from xml.etree import ElementTree as ET
 from pprint import pprint
 
 
 #chargement données
-tree = ET.parse('Corpus_partie1.txt.xml')
+tree = ET.parse('../Corpus_partie1.txt.xml')
 root = tree.getroot()
 for child in root : 
     theTrueRoot =  child
