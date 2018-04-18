@@ -12,14 +12,12 @@ root = tree.getroot()
 
 def getLocation(sentence):
     location = []
-    sentences = root.findall('document/sentences/sentence')  # Peut etre besoin de remplacer par 'document/sentence/sentence'
     print("boucle sentence")
-    for sentence in sentences:
-        tokens = sentence.findall('tokens/token')
-        for token in tokens:
-            loc = token.find('NER')
-            if loc.text == 'LOCATION':
-                location.append(token.find('word').text)
+    tokens = sentence.findall('tokens/token')
+    for token in tokens:
+        loc = token.find('NER')
+        if loc.text == 'LOCATION':
+            location.append(token.find('word').text)
     print('Liste de tous les localisations')
     for loc in location:
         print(loc)
@@ -90,6 +88,36 @@ def getNames():
     for name in names:
         print(name)
     return names
+
+
+def getNames(sentence):
+    names = []
+    print("boucles sentence")
+    tokens = sentence.findall('tokens/token')
+    for token in tokens:
+        person = token.find('NER')
+        if person.text == 'PERSON':
+            names.append(token.find('word').text)
+
+    print('Liste de tous les noms')
+    for name in names:
+        print (name)
+    return names
+
+
+def getDates(sentence):
+    dates = []
+    print("boucles sentence")
+    tokens = sentence.findall('tokens/token')
+    for token in tokens:
+        date = token.find('NER')
+        if date.text == 'DATE':
+            dates.append(token.find('Timex').text)
+    print('Liste des dates')
+    for date in dates:
+        print(date)
+    return dates
+
 
 
 
