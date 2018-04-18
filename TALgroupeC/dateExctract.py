@@ -1,24 +1,16 @@
 import xml.etree.ElementTree as ET
 from pprint import pprint
+from nltk.corpus import wordnet as wn
 #tree = ET.parse('corpusTalV1.txt.xml')
 #tree = ET.parse('exempleTuto.xml')
+
+
 tree = ET.parse('Corpus_partie1_corrige.txt.xml')
 root = tree.getroot()
 
 
 
-#chargement données
-def extractNE(tree):
-    pprint("debug1")
-    root = tree.getroot()
-    pprint("debug1")
-    exemples = root.findall('kill')
-    pprint("debug1")
-    for each in exemples :
-        pprint(each)
-
-
-def getLocation():
+def getLocation(sentence):
     location = []
     sentences = root.findall('document/sentences/sentence')  # Peut etre besoin de remplacer par 'document/sentence/sentence'
     print("boucle sentence")
@@ -60,39 +52,6 @@ def getNamesAndDates():
         print(name)
     return names
 
-def getSentencesWithKillAndName():
-    i = 0
-    ourSentences = []
-    sentences = root.findall('document/sentences/sentence') #Peut etre besoin de remplacer par 'document/sentence/sentence'
-    print("boucle sentence")
-    for sentence in sentences :
-        hasName = False
-        hasKill = False
-        tokens=sentence.findall('tokens/token')
-#################################################
-        for token in tokens :
-            person = token.find('NER')
-            if person.text == 'PERSON':
-                name = token.find('word').text
-                if name[0] == 'C' :
-                    hasName = True
-
-###########################################################
-            kill = token.find('word').text
-            if kill == 'kill':
-                hasKill = True
-        if(hasName and hasKill):
-            i = i+1
-            ourSentences.append(sentence)
-
-
-    print('Liste des phrases avec des personnes commançant par C et des dates')
-    for s in ourSentences :
-        tokens = s.findall('tokens/token')
-        for token in tokens:
-            print(token.find('word').text)
-
-    return ourSentences
 
 
 def doesThisSentenceHasAName(sentence):
@@ -111,8 +70,8 @@ def doesThisSentenceHasAKill(sentence):
     tokens = sentence.findall('tokens/token')
     hasKill = False
     for token in tokens:
-        kill = token.find('word').text
-        if kill == 'kill':
+        kill = token.find('lemma').text
+        if kill in getListSynonyms():
             hasKill = True
     return hasKill
 
@@ -133,27 +92,9 @@ def getNames():
     return names
 
 
-def getSentencesWithKillAndNameV2():
-    i = 0
-    ourSentences = []
-    sentences = root.findall('document/sentences/sentence') #Peut etre besoin de remplacer par 'document/sentence/sentence'
-    print("boucle sentence")
-    for sentence in sentences :
-        hasName = doesThisSentenceHasAName(sentence)
-        hasKill = doesThisSentenceHasAKill(sentence)
-        if(hasName and hasKill):
-            ourSentences.append(sentence)
-            i = i+1
 
-
-    print('Liste des phrases avec des personnes commançant par C et des dates')
-    for s in ourSentences :
-        tokens = s.findall('tokens/token')
-        for token in tokens:
-            print(token.find('word').text)
-    print(i)
-    return ourSentences
-
+def dictionaryOfKill():
+     wordnet.synset('small')
 
 
 
@@ -187,19 +128,25 @@ def getSentencesWithKillAndNameV3():
                 else:
                     nbSentences = nbSentences - 1;
 
-
-
-
-
-    print('Liste des phrases avec des personnes commançant par C et des dates')
+    print('Liste des phrases avec des personnes commançant par C et des kills')
     for s in ourSentences :
         tokens = s.findall('tokens/token')
+        mySentence = ""
         for token in tokens:
-            print(token.find('word').text)
+            mySentence = mySentence + " " + token.find('word').text
+        print(mySentence)
     print(i)
     return ourSentences
 
 
-#getSentencesWithKillAndName() meme nombre de phrases trouvés yes
-#getSentencesWithKillAndNameV2()
+
+
+def getListSynonyms():
+    tabOfSynonym = []
+    killSyn = wn.synset('kill.n.01')
+    for a in killSyn.hyponyms():
+          tabOfSynonym.append(a.name().split(".")[0].replace('_',' '))
+    return tabOfSynonym
+
+
 getSentencesWithKillAndNameV3()
