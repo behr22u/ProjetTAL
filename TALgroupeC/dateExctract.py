@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 from pprint import pprint
 #tree = ET.parse('corpusTalV1.txt.xml')
 #tree = ET.parse('exempleTuto.xml')
-tree = ET.parse('../Corpus_partie1_corrigeé.txt.xml')
+tree = ET.parse('Corpus_partie1_corrige.txt.xml')
 root = tree.getroot()
 
 
@@ -145,18 +145,37 @@ def getSentencesWithKillAndNameV2():
 
 def getSentencesWithKillAndNameV3():
     i = 0 #nombre de phrase trouvées
-    phrasesSuivantes = 0;
+    checkSentence = True;
+    nbSentences = 0;
     ourSentences = []
     sentences = root.findall('document/sentences/sentence') #Peut etre besoin de remplacer par 'document/sentence/sentence'
     print("boucle sentence")
     for sentence in sentences:
-        if(phrasesSuivantes < 3):
+        if(checkSentence ):  # on rajoute une phrase parce que elle contient un nom et kill
             hasName = doesThisSentenceHasAName(sentence)
             hasKill = doesThisSentenceHasAKill(sentence)
             if(hasName and hasKill):
                 ourSentences.append(sentence)
                 i = i+1
-                phrasesSuivantes = 3;
+                checkSentence = False;
+                nbSentences = 2;
+        else:
+            # on rajoute une phrase parce que elle suit une phrases contenant un nom et kill
+            ourSentences.append(sentence)
+            
+            hasName = doesThisSentenceHasAName(sentence)
+            hasKill = doesThisSentenceHasAKill(sentence)
+            if (hasName and hasKill):
+                nbSentences = 2;
+            else:
+                if(nbSentences == 0):
+                    checkSentence = True;
+                else:
+                    nbSentences = nbSentences - 1;
+
+
+
+
 
     print('Liste des phrases avec des personnes commançant par C et des dates')
     for s in ourSentences :
@@ -168,4 +187,5 @@ def getSentencesWithKillAndNameV3():
 
 
 #getSentencesWithKillAndName() meme nombre de phrases trouvés yes
-getSentencesWithKillAndNameV2()
+#getSentencesWithKillAndNameV2()
+getSentencesWithKillAndNameV3()
