@@ -28,7 +28,7 @@ def getLocation():
             loc = token.find('NER')
             if loc.text == 'LOCATION':
                 location.append(token.find('word').text)
-    print('Liste de tous les lieus')
+    print('Liste de tous les localisations')
     for loc in location:
         print(loc)
     return location
