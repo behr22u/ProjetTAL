@@ -18,6 +18,20 @@ def extractNE(tree):
         pprint(each)
 
 
+def getLocation():
+    location = []
+    sentences = root.findall('document/sentences/sentence')  # Peut etre besoin de remplacer par 'document/sentence/sentence'
+    print("boucle sentence")
+    for sentence in sentences:
+        tokens = sentence.findall('tokens/token')
+        for token in tokens:
+            loc = token.find('NER')
+            if loc.text == 'LOCATION':
+                location.append(token.find('word').text)
+    print('Liste de tous les lieus')
+    for loc in location:
+        print(loc)
+    return location
 
 
 
